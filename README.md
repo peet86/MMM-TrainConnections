@@ -22,6 +22,20 @@ modules: [
 			from: 'Bern', // Departure stations
 			to: 'Paris', // Final Station
 			maximumEntries: '6', // Max departures displayed
+			
+			// Show/hide table cells
+			showFrom: true,
+			showDepartureTime: true,
+			showTo: true,
+			showArrivalTime: true,
+			showDurationTime: true,
+			
+			// Customize prefixes and suffixes
+			timePrefix: "(",
+			timeSuffix: ")",
+			durationPrefix: "/",
+			durationSuffix: "",
+			fromToSeparator: "-",
 		}
 	},
 ]
