@@ -22,7 +22,19 @@ Module.register("trainconnections",{
                 apiBase: 'http://transport.opendata.ch/v1/connections',
                 from: "Oberrieden",
                 to: "Dietikon",
-                
+		
+		showDepartureTime: true,
+		showArrivalTime: true,
+		showDurationTime: true,
+                showFrom: true,
+		showTo: true,
+		
+		timePrefix: "(",
+		timeSuffix: ")",
+		durationPrefix: "/",
+		durationSuffix: "",
+		fromToSeparator: "-",
+		
 		titleReplace: {
 			"Zeittabelle ": ""
 		},
@@ -84,42 +96,19 @@ Module.register("trainconnections",{
 			var row = document.createElement("tr");
 			table.appendChild(row);
                         
-                        var trainFromCell = document.createElement("td");
-			trainFromCell.className = "from";
-			trainFromCell.innerHTML = trains.from;
-			row.appendChild(trainFromCell);
-
-			var depCell = document.createElement("td");
-			depCell.className = "departuretime";
-			depCell.innerHTML = "(" + trains.departuretime + ")";
-			row.appendChild(depCell);
-
-			var trainToCell = document.createElement("td");
-			trainToCell.innerHTML = " - " + trains.to;
-			trainToCell.className = "align-right trainto";
-			row.appendChild(trainToCell);
-                        
-                        var arrCell = document.createElement("td");
-			arrCell.className = "arrivaltime";
-			arrCell.innerHTML = "(" + trains.arrivaltime + ")";
-			row.appendChild(arrCell);
+			if(this.config.showFrom) this.addCell(row, trains.from, "from");
+			if(this.config.showDepartureTime) this.addCell(row, this.config.timePrefix + trains.departuretime + this.config.timeSuffix, "departuretime");
+			
+			if(this.config.showTo) this.addCell(row, this.config.fromToSeparator + trains.to, "align-right trainto");
+                        if(this.config.showArrivalTime) this.addCell(row, this.config.timePrefix + trains.arrivaltime + this.config.timeSuffix, "arrivaltime");
 
                         if(trains.delay) {
-                            var delayCell = document.createElement("td");
-                            delayCell.className = "delay red";
-                            delayCell.innerHTML = "+" + trains.delay + " min";
-                            row.appendChild(delayCell);
+				this.addCell(row, "+" + trains.delay + " min", "delay red");
                         } else {
-                            var delayCell = document.createElement("td");
-                            delayCell.className = "delay red";
-                            delayCell.innerHTML = trains.delay;
-                            row.appendChild(delayCell);
+                            	this.addCell(row, trains.delay + " min", "delay red");
                         }
 
-			var durationCell = document.createElement("td");
-			durationCell.innerHTML = "/ " + trains.duration;
-			durationCell.className = "align-right duration";
-			row.appendChild(durationCell);
+			if(this.config.showDuration) this.addCell(row, this.config.durationPrefix + trains.duration + this.config.durationSuffix, "align-right duration")
 
 			if (this.config.fade && this.config.fadePoint < 1) {
 				if (this.config.fadePoint < 0) {
@@ -138,6 +127,13 @@ Module.register("trainconnections",{
 		return table;
 	},
 
+	addCell: function(row, html, class){
+		var cell = document.createElement("td");
+		cell.innerHTML = html;
+		cell.className = class;
+		row.appendChild(cell);
+	},
+	
 	/* updateTimetable(compliments)
 	 * Requests new data from openweather.org.
 	 * Calls processTrains on succesfull response.
